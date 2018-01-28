@@ -42,8 +42,15 @@ conan_define_targets()
 find_package(Boost REQUIRED)
 add_library(libuv::uv UNKNOWN IMPORTED)
 set_target_properties(libuv::uv PROPERTIES
-    IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.lib"
     INTERFACE_INCLUDE_DIRECTORIES "${CONAN_INCLUDE_DIRS_LIBUV}")
+if (WIN32)
+    set_target_properties(libuv::uv PROPERTIES
+        IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.lib")
+else ()
+    set_target_properties(libuv::uv PROPERTIES
+        IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.a")
+endif ()
+
 find_package(ZLIB REQUIRED)
 find_package(OpenSSL REQUIRED)
 
