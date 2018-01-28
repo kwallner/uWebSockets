@@ -44,6 +44,7 @@ target_link_libraries(uWS
 		Boost::boost
         OpenSSL::SSL
         ZLIB::ZLIB
+        $<$<PLATFORM_ID:Linux>:dl>
         $<$<PLATFORM_ID:Linux>:pthread>
         $<$<PLATFORM_ID:Windows>:Psapi>
         $<$<PLATFORM_ID:Windows>:Ws2_32>
