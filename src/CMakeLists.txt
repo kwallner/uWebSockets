@@ -1,3 +1,7 @@
+#if (WIN32)
+#	add_definitions(-D_WIN32_WINNT=0x0501)
+#endif()
+
 add_library(uWS SHARED
     Asio.h
     Backend.h
@@ -36,12 +40,23 @@ target_include_directories(uWS
 
 target_link_libraries(uWS
 	PRIVATE
+        libuv::uv
 		Boost::boost
         OpenSSL::SSL
         ZLIB::ZLIB
         $<$<PLATFORM_ID:Linux>:pthread>
+        $<$<PLATFORM_ID:Windows>:Psapi>
+        $<$<PLATFORM_ID:Windows>:Ws2_32>
+        $<$<PLATFORM_ID:Windows>:Iphlpapi>
+        $<$<PLATFORM_ID:Windows>:Userenv>
     )
 
+set_target_properties(uWS
+    PROPERTIES
+        COMPILE_DEFINITIONS USE_LIBUV
+        INTERFACE_COMPILE_DEFINITIONS USE_LIBUV
+    )
+	
 set_target_properties(uWS
     PROPERTIES
         FOLDER libraries

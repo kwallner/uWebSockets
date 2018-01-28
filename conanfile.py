@@ -19,6 +19,7 @@ class uWebSocketsConan(ConanFile):
 
     def requirements(self):
         self.requires("Boost/1.65.1@%s/%s" % ("kwallner", "testing"))
+        self.requires("libuv/1.15.0@%s/%s" % ("kwallner", "testing"))
         self.requires("zlib/1.2.11@%s/%s" % ("kwallner", "testing"))
         self.requires("OpenSSL/1.0.2m@%s/%s" % ("kwallner", "testing"))
 

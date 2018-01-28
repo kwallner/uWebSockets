@@ -40,6 +40,10 @@ conan_define_targets()
 # Packages from Conan.io
 #
 find_package(Boost REQUIRED)
+add_library(libuv::uv UNKNOWN IMPORTED)
+set_target_properties(libuv::uv PROPERTIES
+    IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.lib"
+    INTERFACE_INCLUDE_DIRECTORIES "${CONAN_INCLUDE_DIRS_LIBUV}")
 find_package(ZLIB REQUIRED)
 find_package(OpenSSL REQUIRED)
 
