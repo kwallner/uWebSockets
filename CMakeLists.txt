@@ -1,41 +1,79 @@
-cmake_minimum_required(VERSION 3.0)
-set(CMAKE_BUILD_TYPE Release)
+#
+# Policies
+#
+if(POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+if(POLICY CMP0048)
+    cmake_policy(SET CMP0048 NEW)
+endif()
+
+#
+# Project
+#
+project(uWebSockets
+    LANGUAGES CXX
+    VERSION 0.13.0
+    )
+
+#
+# Settings
+#
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 11)
-project (µWebSockets)
 
-option(BUILD_SHARED_LIBS "Build shared libraries." ON)
+#
+# Settings
+#
+cmake_minimum_required(VERSION 3.5)
+include (CTest)
 
-find_package(OpenSSL REQUIRED)
+#
+# Use Conan.io
+#
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+conan_define_targets()
+
+#
+# Packages from Conan.io
+#
+find_package(Boost REQUIRED)
+add_library(libuv::uv UNKNOWN IMPORTED)
+set_target_properties(libuv::uv PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CONAN_INCLUDE_DIRS_LIBUV}")
+if(WIN32)
+    set_target_properties(libuv::uv PROPERTIES
+        IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.lib")
+else()
+    set_target_properties(libuv::uv PROPERTIES
+        IMPORTED_LOCATION "${CONAN_LIB_DIRS_LIBUV}/libuv.a")
+endif()
+
 find_package(ZLIB REQUIRED)
+find_package(OpenSSL REQUIRED)
 
-if(NOT LIBUV_INCLUDE_DIR)
-    find_path(LIBUV_INCLUDE_DIR uv.h)
-endif()
-if(NOT LIBUV_LIBRARY)
-    find_library(LIBUV_LIBRARY NAMES uv uv1)
-endif()
-
-add_library(uWS src/Extensions.cpp src/Group.cpp src/WebSocketImpl.cpp src/Networking.cpp src/Hub.cpp src/Node.cpp src/WebSocket.cpp src/HTTPSocket.cpp src/Socket.cpp src/uUV.cpp)
-if(CMAKE_VERSION VERSION_LESS "3.1")
-    # CMake 3.0 does not implement "CMAKE_CXX_STANDARD":
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
-    endif()
-endif()
-target_include_directories(uWS PUBLIC src)
-
-target_include_directories(uWS PUBLIC ${LIBUV_INCLUDE_DIR})
-target_include_directories(uWS PUBLIC ${ZLIB_INCLUDE_DIRS})
-target_include_directories(uWS PUBLIC ${OPENSSL_INCLUDE_DIR})
-target_link_libraries (uWS LINK_PUBLIC ${LIBUV_LIBRARY})
-target_link_libraries (uWS LINK_PUBLIC ${OPENSSL_SSL_LIBRARY})
-target_link_libraries (uWS LINK_PUBLIC ${OPENSSL_CRYPTO_LIBRARY})
-target_link_libraries (uWS LINK_PUBLIC ${ZLIB_LIBRARY})
-
-if (UNIX)
-target_link_libraries (uWS LINK_PUBLIC pthread)
-install (TARGETS uWS DESTINATION /usr/lib64)
-install (FILES src/Extensions.h src/WebSocketProtocol.h src/Networking.h src/WebSocket.h src/Hub.h src/Group.h src/Node.h src/Socket.h src/HTTPSocket.h src/uWS.h src/uUV.h DESTINATION /usr/include/uWS)
-endif (UNIX)
-
+#
+# Subdirectories
+#
+add_subdirectory(src)
 add_subdirectory(examples)
+add_subdirectory(benchmarks)
+add_subdirectory(tests)
+
+#
+# Export
+#
+add_subdirectory(exports)
+
+#
+# Install
+#
+install(
+    FILES
+        "LICENSE"
+        "README.md"
+    DESTINATION
+        . # Root Directory
+    )
