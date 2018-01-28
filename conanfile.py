@@ -26,6 +26,7 @@ class uWebSocketsConan(ConanFile):
     def build(self):
         cmake = CMake(self)
         cmake.definitions["CMAKE_DEBUG_POSTFIX"]= "" # No postfix as distinct directories are used
+        cmake.definitions["BUILD_SHARED_LIBS"] = "OFF" # Does not yet compile as shared
         cmake.configure()
         #cmake.build()
         #cmake.install()

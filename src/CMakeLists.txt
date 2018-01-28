@@ -1,8 +1,6 @@
-#if (WIN32)
-#	add_definitions(-D_WIN32_WINNT=0x0501)
-#endif()
+configure_file(uWS.h ${CMAKE_CURRENT_BINARY_DIR}/uWS/uWS.h @COPY_ONLY@)
 
-add_library(uWS SHARED
+add_library(uWS
     Asio.h
     Backend.h
     CMakeLists.txt
@@ -28,14 +26,16 @@ add_library(uWS SHARED
     WebSocketProtocol.h
     uWS.h
     )
-add_library(uWebSockets::uWS ALIAS uWS)
+add_library(${PROJECT_NAME}::uWS ALIAS uWS)
 
 target_include_directories(uWS
     PRIVATE
-        source
+        ${CMAKE_CURRENT_SOURCE_DIR}
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:include/uWS>
     )
 
 target_link_libraries(uWS
@@ -72,7 +72,7 @@ install(TARGETS uWS
     INCLUDES DESTINATION include
     )
 
-if(MSVC)
+if(MSVC AND BUILD_SHARED_LIBS)
     install(
         FILES $<TARGET_PDB_FILE:uWS>
         DESTINATION bin

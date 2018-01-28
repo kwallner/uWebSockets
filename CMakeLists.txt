@@ -51,10 +51,14 @@ find_package(OpenSSL REQUIRED)
 # Subdirectories
 #
 add_subdirectory(src)
-#add_subdirectory(examples)
-#add_subdirectory(benchmarks)
-#add_subdirectory(tests)
-#add_subdirectory(misc)
+add_subdirectory(examples)
+add_subdirectory(benchmarks)
+add_subdirectory(tests)
+
+#
+# Export
+#
+add_subdirectory(exports)
 
 #
 # Install
