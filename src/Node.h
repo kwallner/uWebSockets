@@ -172,19 +172,19 @@ public:
 
         uv_os_sock_t listenFd = SOCKET_ERROR;
         addrinfo *listenAddr;
+        for (addrinfo *a = result; a && listenFd == SOCKET_ERROR; a = a->ai_next) {
+          if (a->ai_family == AF_INET) {
+            listenFd = socket(a->ai_family, a->ai_socktype, a->ai_protocol);
+            listenAddr = a;
+          }
+        }
+
         if ((options & uS::ONLY_IPV4) == 0) {
             for (addrinfo *a = result; a && listenFd == SOCKET_ERROR; a = a->ai_next) {
                 if (a->ai_family == AF_INET6) {
                     listenFd = socket(a->ai_family, a->ai_socktype, a->ai_protocol);
                     listenAddr = a;
                 }
-            }
-        }
-
-        for (addrinfo *a = result; a && listenFd == SOCKET_ERROR; a = a->ai_next) {
-            if (a->ai_family == AF_INET) {
-                listenFd = socket(a->ai_family, a->ai_socktype, a->ai_protocol);
-                listenAddr = a;
             }
         }
 
