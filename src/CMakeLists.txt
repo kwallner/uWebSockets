@@ -80,20 +80,17 @@ endif()
 
 INSTALL (
     FILES
-        Asio.h
-        Backend.h
-        Epoll.h
-        Extensions.h
-        Group.h
-        HTTPSocket.h
-        Hub.h
-        Libuv.h
-        Networking.h
-        Node.h
-        Socket.h
-        WebSocket.h
-        WebSocketProtocol.h
-        uWS.h
+		Extensions.h
+		Group.h
+		HTTPSocket.h
+		Hub.h
+		Networking.h
+		Node.h
+		Socket.h
+		WebSocket.h
+		WebSocketProtocol.h
+		uUV.h
+		uWS.h
     DESTINATION 
         include/uWS
     )
